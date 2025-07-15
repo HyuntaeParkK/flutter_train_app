@@ -75,7 +75,7 @@ class _SeatPageState extends State<SeatPage> {
   @override
   Widget build(BuildContext context) {
     const double listViewVerticalPadding = 20.0;
-    const double seatsAreaWidth = 310.0; // 5칸 x (좌석 50 + 마진 4*2)
+    const double seatsAreaWidth = 310.0;
 
     return Scaffold(
       appBar: AppBar(
@@ -222,7 +222,7 @@ class _SeatPageState extends State<SeatPage> {
                           ),
                           _buildLabelBox(
                             const SizedBox.shrink(),
-                          ), // 가운데 (번호 자리)
+                          ),
                           _buildLabelBox(
                             Text(
                               'C',
@@ -300,95 +300,120 @@ class _SeatPageState extends State<SeatPage> {
           ),
           const SizedBox(height: 20.0),
 
-          // 예매 하기 버튼
-          SizedBox(
-            width: double.infinity,
-            height: 60.0,
-            child: ElevatedButton(
-              onPressed: () {
-                if (_selectedSeats.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: const Text('좌석을 선택해주세요.'),
-                      action: SnackBarAction(
-                        label: 'X',
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                        },
-                      ),
+          // 예매 하기 버튼 (컴포넌트화)
+          CustomPurpleButton(
+            text: '예매 하기',
+            onPressed: () {
+              if (_selectedSeats.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('좌석을 선택해주세요.'),
+                    action: SnackBarAction(
+                      label: 'X',
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      },
                     ),
-                  );
-                  return;
-                }
-
-                if (_selectedSeats.length != widget.numberOfPassengers) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        '${widget.numberOfPassengers}명의 좌석을 선택해주세요. (현재 ${_selectedSeats.length}개 선택)',
-                      ),
-                      action: SnackBarAction(
-                        label: 'X',
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                        },
-                      ),
-                    ),
-                  );
-                  return;
-                }
-
-                showCupertinoDialog(
-                  context: context,
-                  builder: (BuildContext context) => CupertinoAlertDialog(
-                    title: const Text('예매 하시겠습니까?'),
-                    content: Text(
-                      '인원: ${widget.numberOfPassengers}명\n'
-                      '좌석: ${_selectedSeats.map((s) => s.replaceFirstMapped(RegExp(r'^([A-D])(\d+)$'), (m) => '${m[1]}-${m[2]}')).join(', ')}',
-                    ),
-                    actions: <CupertinoDialogAction>[
-                      CupertinoDialogAction(
-                        child: const Text(
-                          '취소',
-                          style: TextStyle(color: Colors.red),
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      CupertinoDialogAction(
-                        child: const Text(
-                          '확인',
-                          style: TextStyle(color: Colors.blue),
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
                   ),
                 );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+                return;
+              }
+
+              if (_selectedSeats.length != widget.numberOfPassengers) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      '${widget.numberOfPassengers}명의 좌석을 선택해주세요. (현재 ${_selectedSeats.length}개 선택)',
+                    ),
+                    action: SnackBarAction(
+                      label: 'X',
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      },
+                    ),
+                  ),
+                );
+                return;
+              }
+
+              showCupertinoDialog(
+                context: context,
+                builder: (BuildContext context) => CupertinoAlertDialog(
+                  title: const Text('예매 하시겠습니까?'),
+                  content: Text(
+                    '인원: ${widget.numberOfPassengers}명\n'
+                    '좌석: ${_selectedSeats.map((s) => s.replaceFirstMapped(RegExp(r'^([A-D])(\d+)$'), (m) => '${m[1]}-${m[2]}')).join(', ')}',
+                  ),
+                  actions: <CupertinoDialogAction>[
+                    CupertinoDialogAction(
+                      child: const Text(
+                        '취소',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    CupertinoDialogAction(
+                      child: const Text(
+                        '확인',
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
                 ),
-                elevation: 0,
-              ),
-              child: const Text(
-                '예매 하기',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ),
+              );
+            },
           ),
+
           const SizedBox(height: 20.0),
         ],
+      ),
+    );
+  }
+}
+
+// --------------------
+// 재사용 가능한 커스텀 버튼 위젯
+// --------------------
+class CustomPurpleButton extends StatelessWidget {
+  final String text;
+  final VoidCallback onPressed;
+  final bool enabled;
+
+  const CustomPurpleButton({
+    super.key,
+    required this.text,
+    required this.onPressed,
+    this.enabled = true,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      height: 60.0,
+      child: ElevatedButton(
+        onPressed: enabled ? onPressed : null,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.purple,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          elevation: 0,
+        ),
+        child: Text(
+          text,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
       ),
     );
   }

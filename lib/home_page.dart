@@ -20,14 +20,20 @@ class _HomePageState extends State<HomePage> {
   ];
 
   Future<void> _selectStation(BuildContext context, bool isDeparture) async {
+    // 변경 시작: StationListPage로 현재 선택된 다른 역 정보를 전달합니다.
     final String? selectedStation = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => StationListPage(
           stationList: _stationList,
-          title: isDeparture ? '출발역' : '도착역'),
+          title: isDeparture ? '출발역' : '도착역',
+          // isDeparture가 true면 도착역을 제외 (departureStation을 고르는 중이므로 arrivalStation을 제외)
+          // isDeparture가 false면 출발역을 제외 (arrivalStation을 고르는 중이므로 departureStation을 제외)
+          excludedStation: isDeparture ? _arrivalStation : _departureStation, // 제외할 역 전달
+        ),
       ),
     );
+    // 변경 끝
 
     if (selectedStation != null) {
       setState(() {
@@ -67,7 +73,7 @@ class _HomePageState extends State<HomePage> {
                       children: <Widget>[
                         Expanded(
                           child: GestureDetector( // 출발역 선택 가능하도록 GestureDetector 추가
-                            onTap: () => _selectStation(context, true),
+                            onTap: () => _selectStation(context, true), // true: 출발역 선택
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
@@ -97,7 +103,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         Expanded(
                           child: GestureDetector( // 도착역 선택 가능하도록 GestureDetector 추가
-                            onTap: () => _selectStation(context, false),
+                            onTap: () => _selectStation(context, false), // false: 도착역 선택
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
@@ -136,7 +142,12 @@ class _HomePageState extends State<HomePage> {
                     // 좌석 선택 화면으로 이동
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const SeatPage()),
+                      MaterialPageRoute(
+                        builder: (context) => SeatPage(
+                          departureStation: _departureStation!,
+                          arrivalStation: _arrivalStation!,
+                        ),
+                      ),
                     );
                   } else {
                     // 사용자에게 역을 선택하라는 메시지 표시 (예: 스낵바)

@@ -23,7 +23,9 @@ class _HomePageState extends State<HomePage> {
     final String? selectedStation = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => StationListPage(stationList: _stationList),
+        builder: (context) => StationListPage(
+          stationList: _stationList,
+          title: isDeparture ? '출발역' : '도착역'),
       ),
     );
 

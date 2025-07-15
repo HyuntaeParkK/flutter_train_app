@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 // 기차역 리스트를 보여주고 선택할 수 있는 화면
 class StationListPage extends StatelessWidget {
   final List<String> stationList;
+  final String title;
 
-  const StationListPage({super.key, required this.stationList});
+
+  const StationListPage({super.key, required this.stationList, required this.title});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('역 선택'),
+        title: Text(title),
         centerTitle: true,
       ),
       body: ListView.builder(

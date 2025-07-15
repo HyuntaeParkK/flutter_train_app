@@ -26,18 +26,15 @@ class _SeatPageState extends State<SeatPage> {
   // 좌석 위젯을 만드는 헬퍼 함수
   Widget _buildSeat(String seatName) {
     bool isSelected = _selectedSeats.contains(seatName);
-    // 변경: 좌석 색상 - 선택된 것은 purple, 선택 가능한 것은 darkTheme에 맞게 light grey
-    // Colors.grey[300]! 대신 Theme.of(context).cardColor 같은 것을 사용할 수도 있지만,
-    // 여기서는 명확한 구분을 위해 특정 회색 톤을 유지합니다.
-    Color seatColor = isSelected ? Colors.purple : Colors.grey[600]!; // 다크 모드 배경에서 잘 보일 회색 톤으로 변경
+    Color seatColor = isSelected ? Colors.purple : Colors.grey[600]!;
 
     return GestureDetector(
       onTap: () {
         setState(() {
           if (isSelected) {
-            _selectedSeats.remove(seatName); // 선택 해제
+            _selectedSeats.remove(seatName);
           } else {
-            _selectedSeats.add(seatName); // 선택
+            _selectedSeats.add(seatName);
           }
         });
       },
@@ -53,28 +50,24 @@ class _SeatPageState extends State<SeatPage> {
     );
   }
 
-  // A,B,C,D 레이블과 행 번호를 위한 공통 박스 위젯
+  // 레이블 박스 (A,B,C,D, 행번호)
   Widget _buildLabelBox(Widget child) {
     return Container(
       width: 50,
       height: 50,
       margin: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
-      // 변경: 레이블 박스의 배경색을 투명 또는 테마 색상으로 설정 (필요시)
-      // decoration: BoxDecoration(color: Theme.of(context).cardColor.withOpacity(0.0)),
       child: Center(child: child),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    const double gridWidth = 6 * 58; // 50(width) + 4*2(margin) = 58, 6칸
     const double listViewVerticalPadding = 20.0;
 
     return Scaffold(
-      // 변경: Scaffold의 backgroundColor는 main.dart의 ThemeData에서 관리하므로 여기서 삭제합니다.
-      // backgroundColor: Colors.purple[50], // 이 줄을 삭제하거나 주석 처리합니다.
       appBar: AppBar(
         leading: IconButton(
-          // 변경: 뒤로가기 아이콘 색상도 테마에 맞춰 변경
           icon: Icon(Icons.arrow_back_ios, color: Theme.of(context).appBarTheme.iconTheme?.color),
           onPressed: () {
             Navigator.pop(context);
@@ -82,7 +75,6 @@ class _SeatPageState extends State<SeatPage> {
         ),
         title: Text(
           '좌석 선택',
-          // 변경: AppBar 타이틀 텍스트 색상도 테마에 맞춰 변경
           style: Theme.of(context).appBarTheme.titleTextStyle,
         ),
         centerTitle: true,
@@ -100,7 +92,7 @@ class _SeatPageState extends State<SeatPage> {
                   style: const TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
-                    color: Colors.purple, // 보라색은 유지
+                    color: Colors.purple,
                   ),
                 ),
                 const SizedBox(width: 10.0),
@@ -108,12 +100,10 @@ class _SeatPageState extends State<SeatPage> {
                   padding: const EdgeInsets.all(5),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    // 변경: 화살표 원형 배경색도 다크 모드에 맞춰 변경 (예: 조금 더 어두운 회색)
                     color: Colors.grey[700],
                   ),
                   child: Icon(
                     Icons.arrow_circle_right_outlined,
-                    // 변경: 화살표 아이콘 색상도 다크 모드에 맞춰 변경
                     color: Colors.white,
                     size: 30,
                   ),
@@ -124,7 +114,7 @@ class _SeatPageState extends State<SeatPage> {
                   style: const TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
-                    color: Colors.purple, // 보라색은 유지
+                    color: Colors.purple,
                   ),
                 ),
               ],
@@ -138,7 +128,7 @@ class _SeatPageState extends State<SeatPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                // 선택됨 상태 (보라색)
+                // 선택됨 상태
                 Container(
                   width: 24,
                   height: 24,
@@ -148,20 +138,18 @@ class _SeatPageState extends State<SeatPage> {
                   ),
                 ),
                 const SizedBox(width: 4),
-                // 변경: 텍스트 색상을 테마의 기본 bodyColor로 설정하여 다크모드에서 잘 보이게
                 Text('선택됨', style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color)),
                 const SizedBox(width: 20),
-                // 선택 가능 상태 (회색)
+                // 선택 가능 상태
                 Container(
                   width: 24,
                   height: 24,
                   decoration: BoxDecoration(
-                    color: Colors.grey[600]!, // 다크 모드에 맞춰 회색 톤 조정
+                    color: Colors.grey[600]!,
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
                 const SizedBox(width: 4),
-                // 변경: 텍스트 색상을 테마의 기본 bodyColor로 설정하여 다크모드에서 잘 보이게
                 Text('선택 가능', style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color)),
               ],
             ),
@@ -170,105 +158,107 @@ class _SeatPageState extends State<SeatPage> {
 
           // 좌석 배치도
           Expanded(
-            child: Align(
-              alignment: Alignment.center,
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: listViewVerticalPadding),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // 최상단에 ABCD 레이블 표시
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _buildLabelBox(
-                          Text(
-                            _seatColumns[0],
-                            style: TextStyle( // 변경: 텍스트 색상을 다크모드에 맞춰 밝게 조정
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white70, // 조금 투명한 흰색
-                            ),
-                          ),
-                        ),
-                        _buildLabelBox(
-                          Text(
-                            _seatColumns[1],
-                            style: TextStyle( // 변경: 텍스트 색상을 다크모드에 맞춰 밝게 조정
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white70,
-                            ),
-                          ),
-                        ),
-                        _buildLabelBox(const SizedBox.shrink()),
-                        _buildLabelBox(
-                          Text(
-                            _seatColumns[2],
-                            style: TextStyle( // 변경: 텍스트 색상을 다크모드에 맞춰 밝게 조정
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white70,
-                            ),
-                          ),
-                        ),
-                        _buildLabelBox(
-                          Text(
-                            _seatColumns[3],
-                            style: TextStyle( // 변경: 텍스트 색상을 다크모드에 맞춰 밝게 조정
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white70,
-                            ),
-                          ),
-                        ),
-                        _buildLabelBox(const SizedBox.shrink()),
-                      ],
-                    ),
-                    // 좌석 Grid
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 6,
-                        childAspectRatio: (50.0 + (4.0 * 2)) / (50.0 + (8.0 * 2)),
-                        crossAxisSpacing: 0.0,
-                        mainAxisSpacing: 0.0,
-                      ),
-                      itemCount: _maxSeatRows * 6,
-                      itemBuilder: (context, index) {
-                        final int rowNum = index ~/ 6 + 1;
-                        final int colPos = index % 6;
-
-                        if (colPos == 2) {
-                          return _buildLabelBox(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(
+                vertical: listViewVerticalPadding,
+              ),
+              child: Center(
+                child: SizedBox(
+                  width: gridWidth, // 핵심: 좌석 그리드 전체를 정해진 너비로!
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // 최상단에 ABCD 레이블 표시
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildLabelBox(
                             Text(
-                              '$rowNum',
-                              style: TextStyle( // 변경: 행 번호 텍스트 색상을 다크모드에 맞춰 밝게 조정
+                              _seatColumns[0],
+                              style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: Colors.white70,
                               ),
                             ),
-                          );
-                        } else if (colPos == 0) {
-                          String seatName = '${_seatColumns[0]}$rowNum';
-                          return _buildSeat(seatName);
-                        } else if (colPos == 1) {
-                          String seatName = '${_seatColumns[1]}$rowNum';
-                          return _buildSeat(seatName);
-                        } else if (colPos == 3) {
-                          String seatName = '${_seatColumns[2]}$rowNum';
-                          return _buildSeat(seatName);
-                        } else if (colPos == 4) {
-                          String seatName = '${_seatColumns[3]}$rowNum';
-                          return _buildSeat(seatName);
-                        } else {
-                          return _buildLabelBox(const SizedBox.shrink());
-                        }
-                      },
-                    ),
-                  ],
+                          ),
+                          _buildLabelBox(
+                            Text(
+                              _seatColumns[1],
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white70,
+                              ),
+                            ),
+                          ),
+                          _buildLabelBox(const SizedBox.shrink()),
+                          _buildLabelBox(
+                            Text(
+                              _seatColumns[2],
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white70,
+                              ),
+                            ),
+                          ),
+                          _buildLabelBox(
+                            Text(
+                              _seatColumns[3],
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white70,
+                              ),
+                            ),
+                          ),
+                          _buildLabelBox(const SizedBox.shrink()),
+                        ],
+                      ),
+                      // 좌석 Grid
+                      GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 5,
+                          childAspectRatio: 58 / 66, // (50+4*2)/(50+8*2)
+                        ),
+                        itemCount: _maxSeatRows * 5,
+                        itemBuilder: (context, index) {
+                          final int rowNum = index ~/ 5 + 1;
+                          final int colPos = index % 5;
+
+                          if (colPos == 2) {
+                            return _buildLabelBox(
+                              Text(
+                                '$rowNum',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            );
+                          } else if (colPos == 0) {
+                            String seatName = '${_seatColumns[0]}$rowNum';
+                            return _buildSeat(seatName);
+                          } else if (colPos == 1) {
+                            String seatName = '${_seatColumns[1]}$rowNum';
+                            return _buildSeat(seatName);
+                          } else if (colPos == 3) {
+                            String seatName = '${_seatColumns[2]}$rowNum';
+                            return _buildSeat(seatName);
+                          } else if (colPos == 4) {
+                            String seatName = '${_seatColumns[3]}$rowNum';
+                            return _buildSeat(seatName);
+                          } else {
+                            return _buildLabelBox(const SizedBox.shrink());
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

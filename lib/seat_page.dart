@@ -19,11 +19,9 @@ class SeatPage extends StatefulWidget {
 
 class _SeatPageState extends State<SeatPage> {
   final Set<String> _selectedSeats = {};
-
   final List<String> _seatColumns = ['A', 'B', 'C', 'D'];
   final int _maxSeatRows = 20;
 
-  // 좌석 위젯을 만드는 헬퍼 함수
   Widget _buildSeat(String seatName) {
     bool isSelected = _selectedSeats.contains(seatName);
     Color seatColor = isSelected ? Colors.purple : Colors.grey[600]!;
@@ -34,7 +32,21 @@ class _SeatPageState extends State<SeatPage> {
           if (isSelected) {
             _selectedSeats.remove(seatName);
           } else {
-            _selectedSeats.add(seatName);
+            if (_selectedSeats.length < widget.numberOfPassengers) {
+              _selectedSeats.add(seatName);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('${widget.numberOfPassengers}명의 좌석을 선택해주세요.'),
+                  action: SnackBarAction(
+                    label: 'X',
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    },
+                  ),
+                ),
+              );
+            }
           }
         });
       },
@@ -50,20 +62,20 @@ class _SeatPageState extends State<SeatPage> {
     );
   }
 
-  // 레이블 박스 (A,B,C,D, 행번호)
   Widget _buildLabelBox(Widget child) {
     return Container(
       width: 50,
       height: 50,
       margin: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
+      alignment: Alignment.center,
       child: Center(child: child),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    const double gridWidth = 6 * 58; // 50(width) + 4*2(margin) = 58, 6칸
     const double listViewVerticalPadding = 20.0;
+    const double seatsAreaWidth = 310.0; // 5칸 x (좌석 50 + 마진 4*2)
 
     return Scaffold(
       appBar: AppBar(
@@ -102,7 +114,7 @@ class _SeatPageState extends State<SeatPage> {
                     shape: BoxShape.circle,
                     color: Colors.grey[700],
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.arrow_circle_right_outlined,
                     color: Colors.white,
                     size: 30,
@@ -128,7 +140,6 @@ class _SeatPageState extends State<SeatPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                // 선택됨 상태
                 Container(
                   width: 24,
                   height: 24,
@@ -140,7 +151,6 @@ class _SeatPageState extends State<SeatPage> {
                 const SizedBox(width: 4),
                 Text('선택됨', style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color)),
                 const SizedBox(width: 20),
-                // 선택 가능 상태
                 Container(
                   width: 24,
                   height: 24,
@@ -156,7 +166,7 @@ class _SeatPageState extends State<SeatPage> {
           ),
           const SizedBox(height: 30.0),
 
-          // 좌석 배치도
+          // 좌석 배치도 (항상 화면 중앙!)
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(
@@ -164,17 +174,18 @@ class _SeatPageState extends State<SeatPage> {
               ),
               child: Center(
                 child: SizedBox(
-                  width: gridWidth, // 핵심: 좌석 그리드 전체를 정해진 너비로!
+                  width: seatsAreaWidth,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // 최상단에 ABCD 레이블 표시
+                      // 헤더 Row (A B [번호] C D)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           _buildLabelBox(
                             Text(
-                              _seatColumns[0],
+                              'A',
+                              textAlign: TextAlign.center,
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -184,7 +195,8 @@ class _SeatPageState extends State<SeatPage> {
                           ),
                           _buildLabelBox(
                             Text(
-                              _seatColumns[1],
+                              'B',
+                              textAlign: TextAlign.center,
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -192,10 +204,11 @@ class _SeatPageState extends State<SeatPage> {
                               ),
                             ),
                           ),
-                          _buildLabelBox(const SizedBox.shrink()),
+                          _buildLabelBox(const SizedBox.shrink()), // 가운데 (번호 자리)
                           _buildLabelBox(
                             Text(
-                              _seatColumns[2],
+                              'C',
+                              textAlign: TextAlign.center,
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -205,7 +218,8 @@ class _SeatPageState extends State<SeatPage> {
                           ),
                           _buildLabelBox(
                             Text(
-                              _seatColumns[3],
+                              'D',
+                              textAlign: TextAlign.center,
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -213,7 +227,6 @@ class _SeatPageState extends State<SeatPage> {
                               ),
                             ),
                           ),
-                          _buildLabelBox(const SizedBox.shrink()),
                         ],
                       ),
                       // 좌석 Grid
@@ -222,7 +235,9 @@ class _SeatPageState extends State<SeatPage> {
                         physics: const NeverScrollableScrollPhysics(),
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 5,
-                          childAspectRatio: 58 / 66, // (50+4*2)/(50+8*2)
+                          childAspectRatio: 58 / 66,
+                          crossAxisSpacing: 0.0,
+                          mainAxisSpacing: 0.0,
                         ),
                         itemCount: _maxSeatRows * 5,
                         itemBuilder: (context, index) {
@@ -233,6 +248,7 @@ class _SeatPageState extends State<SeatPage> {
                             return _buildLabelBox(
                               Text(
                                 '$rowNum',
+                                textAlign: TextAlign.center,
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,

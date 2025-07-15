@@ -43,27 +43,43 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // 변경: 인원수 증가 함수
+  // 변경: 인원수 증가 함수 (스낵바에 X 버튼 추가)
   void _incrementPassengers() {
     setState(() {
       if (_numberOfPassengers < 4) { // 최대 4명
         _numberOfPassengers++;
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('최대 4명까지 예약 가능합니다.')),
+          SnackBar( // 변경: SnackBarAction 추가
+            content: const Text('최대 4명까지 예약 가능합니다.'),
+            action: SnackBarAction(
+              label: 'X',
+              onPressed: () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              },
+            ),
+          ),
         );
       }
     });
   }
 
-  // 변경: 인원수 감소 함수
+  // 변경: 인원수 감소 함수 (스낵바에 X 버튼 추가)
   void _decrementPassengers() {
     setState(() {
       if (_numberOfPassengers > 1) { // 최소 1명
         _numberOfPassengers--;
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('최소 1명 이상 예약해야 합니다.')),
+          SnackBar( // 변경: SnackBarAction 추가
+            content: const Text('최소 1명 이상 예약해야 합니다.'),
+            action: SnackBarAction(
+              label: 'X',
+              onPressed: () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              },
+            ),
+          ),
         );
       }
     });
@@ -159,18 +175,16 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              // 변경: 카드와 인원수 선택 UI 사이 간격
-              const SizedBox(height: 30.0), // 비고: 좌석 선택 버튼과 박스의 간격은 20이므로, 카드와 인원수 사이는 30으로 조정
+              const SizedBox(height: 30.0),
 
-              // 변경: 인원수 선택 UI 추가
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor, // 테마의 Card 색상 사용
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(15.0),
                 ),
                 child: Row(
-                  mainAxisSize: MainAxisSize.min, // 내용물에 맞게 너비 조절
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
                       icon: Icon(Icons.remove_circle, color: _numberOfPassengers == 1 ? Colors.grey : Colors.deepPurple),
@@ -183,7 +197,7 @@ class _HomePageState extends State<HomePage> {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).textTheme.bodyLarge?.color, // 테마의 기본 텍스트 색상 사용
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -196,14 +210,16 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
 
-              // 변경: 인원수 선택 UI와 좌석 선택 버튼 사이 간격
-              const SizedBox(height: 20.0), // 비고: 좌석 선택 버튼과 인원수 선택 박스의 간격 20
+              const SizedBox(height: 20.0),
 
               SizedBox(
                 width: double.infinity,
                 height: 60.0,
                 child: ElevatedButton(
                   onPressed: () {
+                    // 변경: 스낵바가 표시되어 있다면 즉시 숨깁니다.
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
                     if (_departureStation != null && _arrivalStation != null) {
                       Navigator.push(
                         context,
@@ -211,14 +227,20 @@ class _HomePageState extends State<HomePage> {
                           builder: (context) => SeatPage(
                             departureStation: _departureStation!,
                             arrivalStation: _arrivalStation!,
-                            numberOfPassengers: _numberOfPassengers, // 변경: 인원수 전달
+                            numberOfPassengers: _numberOfPassengers,
                           ),
                         ),
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('출발역과 도착역을 모두 선택해주세요.'),
+                        SnackBar( // 변경: 스낵바에 X 버튼 추가
+                          content: const Text('출발역과 도착역을 모두 선택해주세요.'),
+                          action: SnackBarAction(
+                            label: 'X',
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            },
+                          ),
                         ),
                       );
                     }
@@ -240,7 +262,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              // const SizedBox(height: 20.0), // 이 부분은 이제 필요 없을 가능성이 높습니다.
             ],
           ),
         ),

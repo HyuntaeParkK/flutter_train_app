@@ -1,5 +1,5 @@
 🚂 Flutter Train App
-![alt text](image.png)
+<img src="image.png" alt="App Screenshot" width="300" height="600"/>
 
 🚀 프로젝트 개요
 Flutter Train App은 간단한 기차표 예매 과정을 시뮬레이션하는 모바일 애플리케이션입니다. 사용자 친화적인 인터페이스를 제공하며, 출발역 및 도착역 선택, 인원수 지정, 좌석 선택 등의 기능을 포함하고 있습니다. 이 프로젝트는 Flutter를 이용한 UI 구현 및 기본적인 상태 관리, 화면 간 데이터 전달, 다크 모드 적용 등의 학습 목적으로 개발되었습니다.
@@ -66,12 +66,14 @@ cd flutter_train_app
 
 Bash
 flutter pub get
+
 4. 앱 실행
 
 에뮬레이터 또는 실제 디바이스를 연결한 후, 다음 명령어를 실행하여 앱을 빌드하고 실행합니다.
 
 Bash
 flutter run
+
 5. (선택 사항) 빌드 클린
 
 만약 빌드 관련 문제가 발생하면 다음 명령어로 빌드 캐시를 정리한 후 다시 시도해보세요.

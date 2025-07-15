@@ -26,31 +26,20 @@ class _SeatPageState extends State<SeatPage> {
   // 좌석 위젯을 만드는 헬퍼 함수
   Widget _buildSeat(String seatName) {
     bool isSelected = _selectedSeats.contains(seatName);
-    Color seatColor = isSelected ? Colors.purple : Colors.grey[300]!;
+    // 변경: 좌석 색상 - 선택된 것은 purple, 선택 가능한 것은 darkTheme에 맞게 light grey
+    // Colors.grey[300]! 대신 Theme.of(context).cardColor 같은 것을 사용할 수도 있지만,
+    // 여기서는 명확한 구분을 위해 특정 회색 톤을 유지합니다.
+    Color seatColor = isSelected ? Colors.purple : Colors.grey[600]!; // 다크 모드 배경에서 잘 보일 회색 톤으로 변경
 
     return GestureDetector(
       onTap: () {
         setState(() {
           if (isSelected) {
-            _selectedSeats.remove(seatName);
+            _selectedSeats.remove(seatName); // 선택 해제
           } else {
-            _selectedSeats.add(seatName);
+            _selectedSeats.add(seatName); // 선택
           }
         });
-        // 변경: _buildSeat 내부 스낵바에 X 버튼 추가
-        // if (isUnavailable) { // 만약 예매 불가 로직이 있다면 여기서 스낵바 띄울 수 있음
-        //   ScaffoldMessenger.of(context).showSnackBar(
-        //     SnackBar(
-        //       content: Text('$seatName 좌석은 예매할 수 없습니다.'),
-        //       action: SnackBarAction( // X 버튼 추가
-        //         label: 'X',
-        //         onPressed: () {
-        //           ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        //         },
-        //       ),
-        //     ),
-        //   );
-        // }
       },
       child: Container(
         width: 50,
@@ -70,6 +59,8 @@ class _SeatPageState extends State<SeatPage> {
       width: 50,
       height: 50,
       margin: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
+      // 변경: 레이블 박스의 배경색을 투명 또는 테마 색상으로 설정 (필요시)
+      // decoration: BoxDecoration(color: Theme.of(context).cardColor.withOpacity(0.0)),
       child: Center(child: child),
     );
   }
@@ -79,22 +70,26 @@ class _SeatPageState extends State<SeatPage> {
     const double listViewVerticalPadding = 20.0;
 
     return Scaffold(
-      backgroundColor: Colors.purple[50],
+      // 변경: Scaffold의 backgroundColor는 main.dart의 ThemeData에서 관리하므로 여기서 삭제합니다.
+      // backgroundColor: Colors.purple[50], // 이 줄을 삭제하거나 주석 처리합니다.
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          // 변경: 뒤로가기 아이콘 색상도 테마에 맞춰 변경
+          icon: Icon(Icons.arrow_back_ios, color: Theme.of(context).appBarTheme.iconTheme?.color),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: const Text(
+        title: Text(
           '좌석 선택',
+          // 변경: AppBar 타이틀 텍스트 색상도 테마에 맞춰 변경
+          style: Theme.of(context).appBarTheme.titleTextStyle,
         ),
         centerTitle: true,
       ),
       body: Column(
         children: <Widget>[
-          // ... (출발/도착역 정보) ...
+          // 출발/도착역 정보
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
             child: Row(
@@ -105,7 +100,7 @@ class _SeatPageState extends State<SeatPage> {
                   style: const TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
-                    color: Colors.purple,
+                    color: Colors.purple, // 보라색은 유지
                   ),
                 ),
                 const SizedBox(width: 10.0),
@@ -113,11 +108,13 @@ class _SeatPageState extends State<SeatPage> {
                   padding: const EdgeInsets.all(5),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.grey[200],
+                    // 변경: 화살표 원형 배경색도 다크 모드에 맞춰 변경 (예: 조금 더 어두운 회색)
+                    color: Colors.grey[700],
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.arrow_circle_right_outlined,
-                    color: Colors.grey,
+                    // 변경: 화살표 아이콘 색상도 다크 모드에 맞춰 변경
+                    color: Colors.white,
                     size: 30,
                   ),
                 ),
@@ -127,7 +124,7 @@ class _SeatPageState extends State<SeatPage> {
                   style: const TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
-                    color: Colors.purple,
+                    color: Colors.purple, // 보라색은 유지
                   ),
                 ),
               ],
@@ -141,7 +138,7 @@ class _SeatPageState extends State<SeatPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                // 선택됨 상태
+                // 선택됨 상태 (보라색)
                 Container(
                   width: 24,
                   height: 24,
@@ -151,19 +148,21 @@ class _SeatPageState extends State<SeatPage> {
                   ),
                 ),
                 const SizedBox(width: 4),
-                const Text('선택됨'),
+                // 변경: 텍스트 색상을 테마의 기본 bodyColor로 설정하여 다크모드에서 잘 보이게
+                Text('선택됨', style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color)),
                 const SizedBox(width: 20),
-                // 선택 가능 상태
+                // 선택 가능 상태 (회색)
                 Container(
                   width: 24,
                   height: 24,
                   decoration: BoxDecoration(
-                    color: Colors.grey[300]!,
+                    color: Colors.grey[600]!, // 다크 모드에 맞춰 회색 톤 조정
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
                 const SizedBox(width: 4),
-                const Text('선택 가능'),
+                // 변경: 텍스트 색상을 테마의 기본 bodyColor로 설정하여 다크모드에서 잘 보이게
+                Text('선택 가능', style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color)),
               ],
             ),
           ),
@@ -185,20 +184,20 @@ class _SeatPageState extends State<SeatPage> {
                         _buildLabelBox(
                           Text(
                             _seatColumns[0],
-                            style: const TextStyle(
+                            style: TextStyle( // 변경: 텍스트 색상을 다크모드에 맞춰 밝게 조정
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black54,
+                              color: Colors.white70, // 조금 투명한 흰색
                             ),
                           ),
                         ),
                         _buildLabelBox(
                           Text(
                             _seatColumns[1],
-                            style: const TextStyle(
+                            style: TextStyle( // 변경: 텍스트 색상을 다크모드에 맞춰 밝게 조정
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black54,
+                              color: Colors.white70,
                             ),
                           ),
                         ),
@@ -206,20 +205,20 @@ class _SeatPageState extends State<SeatPage> {
                         _buildLabelBox(
                           Text(
                             _seatColumns[2],
-                            style: const TextStyle(
+                            style: TextStyle( // 변경: 텍스트 색상을 다크모드에 맞춰 밝게 조정
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black54,
+                              color: Colors.white70,
                             ),
                           ),
                         ),
                         _buildLabelBox(
                           Text(
                             _seatColumns[3],
-                            style: const TextStyle(
+                            style: TextStyle( // 변경: 텍스트 색상을 다크모드에 맞춰 밝게 조정
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black54,
+                              color: Colors.white70,
                             ),
                           ),
                         ),
@@ -245,10 +244,10 @@ class _SeatPageState extends State<SeatPage> {
                           return _buildLabelBox(
                             Text(
                               '$rowNum',
-                              style: const TextStyle(
+                              style: TextStyle( // 변경: 행 번호 텍스트 색상을 다크모드에 맞춰 밝게 조정
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black,
+                                color: Colors.white,
                               ),
                             ),
                           );
@@ -283,10 +282,10 @@ class _SeatPageState extends State<SeatPage> {
             child: ElevatedButton(
               onPressed: () {
                 if (_selectedSeats.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar( // 변경: 스낵바에 X 버튼 추가
+                  ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: const Text('좌석을 선택해주세요.'),
-                      action: SnackBarAction( // X 버튼 추가
+                      action: SnackBarAction(
                         label: 'X',
                         onPressed: () {
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -298,10 +297,10 @@ class _SeatPageState extends State<SeatPage> {
                 }
 
                 if (_selectedSeats.length != widget.numberOfPassengers) {
-                  ScaffoldMessenger.of(context).showSnackBar( // 변경: 스낵바에 X 버튼 추가
+                  ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text('${widget.numberOfPassengers}명의 좌석을 선택해주세요. (현재 ${_selectedSeats.length}개 선택)'),
-                      action: SnackBarAction( // X 버튼 추가
+                      action: SnackBarAction(
                         label: 'X',
                         onPressed: () {
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();

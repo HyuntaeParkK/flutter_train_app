@@ -80,7 +80,10 @@ class _SeatPageState extends State<SeatPage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Theme.of(context).appBarTheme.iconTheme?.color),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: Theme.of(context).appBarTheme.iconTheme?.color,
+          ),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -95,7 +98,10 @@ class _SeatPageState extends State<SeatPage> {
         children: <Widget>[
           // 출발/도착역 정보
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 10.0,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -149,7 +155,12 @@ class _SeatPageState extends State<SeatPage> {
                   ),
                 ),
                 const SizedBox(width: 4),
-                Text('선택됨', style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color)),
+                Text(
+                  '선택됨',
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
+                  ),
+                ),
                 const SizedBox(width: 20),
                 Container(
                   width: 24,
@@ -160,7 +171,12 @@ class _SeatPageState extends State<SeatPage> {
                   ),
                 ),
                 const SizedBox(width: 4),
-                Text('선택 가능', style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color)),
+                Text(
+                  '선택 가능',
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
+                  ),
+                ),
               ],
             ),
           ),
@@ -204,7 +220,9 @@ class _SeatPageState extends State<SeatPage> {
                               ),
                             ),
                           ),
-                          _buildLabelBox(const SizedBox.shrink()), // 가운데 (번호 자리)
+                          _buildLabelBox(
+                            const SizedBox.shrink(),
+                          ), // 가운데 (번호 자리)
                           _buildLabelBox(
                             Text(
                               'C',
@@ -233,12 +251,13 @@ class _SeatPageState extends State<SeatPage> {
                       GridView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 5,
-                          childAspectRatio: 58 / 66,
-                          crossAxisSpacing: 0.0,
-                          mainAxisSpacing: 0.0,
-                        ),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 5,
+                              childAspectRatio: 58 / 66,
+                              crossAxisSpacing: 0.0,
+                              mainAxisSpacing: 0.0,
+                            ),
                         itemCount: _maxSeatRows * 5,
                         itemBuilder: (context, index) {
                           final int rowNum = index ~/ 5 + 1;
@@ -305,7 +324,9 @@ class _SeatPageState extends State<SeatPage> {
                 if (_selectedSeats.length != widget.numberOfPassengers) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('${widget.numberOfPassengers}명의 좌석을 선택해주세요. (현재 ${_selectedSeats.length}개 선택)'),
+                      content: Text(
+                        '${widget.numberOfPassengers}명의 좌석을 선택해주세요. (현재 ${_selectedSeats.length}개 선택)',
+                      ),
                       action: SnackBarAction(
                         label: 'X',
                         onPressed: () {
@@ -321,16 +342,25 @@ class _SeatPageState extends State<SeatPage> {
                   context: context,
                   builder: (BuildContext context) => CupertinoAlertDialog(
                     title: const Text('예매 하시겠습니까?'),
-                    content: Text('인원: ${widget.numberOfPassengers}명\n좌석: ${_selectedSeats.join(', ')}'),
+                    content: Text(
+                      '인원: ${widget.numberOfPassengers}명\n'
+                      '좌석: ${_selectedSeats.map((s) => s.replaceFirstMapped(RegExp(r'^([A-D])(\d+)$'), (m) => '${m[1]}-${m[2]}')).join(', ')}',
+                    ),
                     actions: <CupertinoDialogAction>[
                       CupertinoDialogAction(
-                        child: const Text('취소', style: TextStyle(color: Colors.red)),
+                        child: const Text(
+                          '취소',
+                          style: TextStyle(color: Colors.red),
+                        ),
                         onPressed: () {
                           Navigator.pop(context);
                         },
                       ),
                       CupertinoDialogAction(
-                        child: const Text('확인', style: TextStyle(color: Colors.blue)),
+                        child: const Text(
+                          '확인',
+                          style: TextStyle(color: Colors.blue),
+                        ),
                         onPressed: () {
                           Navigator.pop(context);
                           Navigator.pop(context);
